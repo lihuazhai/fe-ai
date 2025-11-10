@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "scripts": {
+    "split": "python3 split_by_sentence.py",
+    "merge": "vite --mode admin",
+    "build": "vite build",
+    "lint": "eslint .",
+    "deploy": "vite preview"
+  }
+}

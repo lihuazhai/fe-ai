@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>示例页面 - 头部与中间文字</title>
+  <link rel="stylesheet" href="../Styles/epub.css" />
+  <style>
+    /* 放大并上移首字母（首字下沉/首字放大效果的变体） */
+    .cap {
+      display: inline-block;
+      font-size: 1.45em;
+      /* 放大比例，可根据需要微调 */
+      line-height: 1;
+      transform: translateY(-0.18em);
+      /* 上移 */
+      font-weight: 700;
+      margin-right: 0.04em;
+    }
+
+    @media (max-width:600px) {
+      .cap {
+        font-size: 1.25em;
+        transform: translateY(-0.12em);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="main-content">
+    <div style="text-align:center; margin-top:20%;">
+      <p>
+        <strong><span class="cap">W</span>here’s my Captain Awesome</strong> cape?” Eugene grumbled as he searched his
+        closet. He tossed clothes back over his head,
+        covering a stack of Super Dude comic books.
+      </p>
+      <p>
+        Psssst! Want to know a secret? It’s the most hugest, gigantist, enormondoist secret ever. The boy looking for
+        his
+        cape is not just eight-year-old Eugene McGillicudy, son of Ned and Betsy, and
+      </p>
+    </div>
+  </main>
+
+
+</body>
+
+</html>

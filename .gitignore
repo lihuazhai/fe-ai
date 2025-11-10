@@ -1,0 +1,17 @@
+# 配置文件，系统自动生成，勿动
+# 指定发布 npm 的时候需要忽略的文件和文件夹
+# npm 默认不会把 node_modules 发上去
+
+node_modules
+.Ds_Store
+.prettierrc.js
+.eslintrc.js
+# rollup.config.js
+.babelrc
+yarn.lock
+package-lock.json
+
+dist
+output
+# test
+commands

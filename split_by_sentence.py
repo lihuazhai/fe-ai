@@ -4,8 +4,8 @@ import whisper
 from tqdm import tqdm
 
 # 输入音频文件路径
-AUDIO_PATH = "teller.mp3"  # 你要分割的音频文件
-OUTPUT_DIR = "output_segments"
+AUDIO_PATH = "output/client.mp3"  # 你要分割的音频文件
+OUTPUT_DIR = "output/output_segments"
 
 # 创建输出目录
 os.makedirs(OUTPUT_DIR, exist_ok=True)
