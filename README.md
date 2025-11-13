@@ -13,7 +13,7 @@
 > 单个文件转换
 > ./convert_audio.sh video.mp4
 > 批量转文件夹下所有文件
-> ./ bath_convert.sh
+> ./ bath_convert.sh /root/folder
 
 ## images_to_text todo
 
