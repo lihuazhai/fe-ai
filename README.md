@@ -11,9 +11,9 @@
 ## mp4 转 MP3
 
 > 单个文件转换
-> ./convert_audio.sh video.mp4
+> chmod +x convert_audio.sh  ./convert_audio.sh video.mp4
 > 批量转文件夹下所有文件
-> ./ bath_convert.sh /root/folder
+> chmod +x batch_convert.sh ./batch_convert.sh /root/folder
 
 ## images_to_text todo
 
