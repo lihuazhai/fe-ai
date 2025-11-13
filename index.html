@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魁北克技术移民（PSTQ）评分计算器</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            background-color: var(--light-color);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .tab:hover {
+            background-color: #dde4e6;
+        }
+        
+        .tab.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        select:focus, input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .checkbox-item input {
+            width: auto;
+            margin-right: 5px;
+        }
+        
+        .score-display {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .total-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 10px 0;
+        }
+        
+        .max-score {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+        
+        .language-skills {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .skill-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                min-width: 100%;
+            }
+            
+            .language-skills {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .help-text {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>魁北克技术移民（PSTQ）评分计算器</h1>
+            <p class="subtitle">根据魁北克移民局最新评分标准，评估您的移民资格</p>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="human-capital">人力资本</div>
+            <div class="tab" data-tab="quebec-needs">魁北克需求</div>
+            <div class="tab" data-tab="adaptation">适应能力</div>
+        </div>
+        
+        <div class="tab-content active" id="human-capital">
+            <div class="section">
+                <h3 class="section-title">法语知识 (最高200分)</h3>
+                <div class="form-group">
+                    <label>是否有随行配偶/事实伴侣？</label>
+                    <select id="has-spouse">
+                        <option value="no">无</option>
+                        <option value="yes">有</option>
+                    </select>
+                </div>
+                
+                <div class="language-skills">
+                    <div class="skill-item">
+                        <label>听力理解</label>
+                        <select id="listening">
+                            <option value="0">1-4级 (0分)</option>
+                            <option value="30">5-6级 (30分)</option>
+                            <option value="35">7-8级 (35分)</option>
+                            <option value="40">9-12级 (40分)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <label>口语表达</label>
+                        <select id="speaking">
+                            <option value="0">1-4级 (0分)</option>
+                            <option value="30">5-6级 (30分)</option>
+                            <option value="35">7-8级 (35分)</option>
+                            <option value="40">9-12级 (40分)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <label>阅读理解</label>
+                        <select id="reading">
+                            <option value="0">1-4级 (0分)</option>
+                            <option value="30">5-6级 (30分)</option>
+                            <option value="35">7-8级 (35分)</option>
+                            <option value="40">9-12级 (40分)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="skill-item">
+                        <label>书面表达</label>
+                        <select id="writing">
+                            <option value="0">1-4级 (0分)</option>
+                            <option value="30">5-6级 (30分)</option>
+                            <option value="35">7-8级 (35分)</option>
+                            <option value="40">9-12级 (40分)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>是否有免考资格？</label>
+                    <select id="french-exemption">
+                        <option value="no">无</option>
+                        <option value="yes">有（法国/比利时/瑞士法语区高中毕业）</option>
+                    </select>
+                    <p class="help-text">持有法国、比利时法语区或瑞士法语区高中毕业证可视为四项技能均达到9级</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">年龄 (最高120分)</h3>
+                <div class="form-group">
+                    <label>您的年龄</label>
+                    <select id="age">
+                        <option value="110">18-19岁 (110分)</option>
+                        <option value="120" selected>20-30岁 (120分)</option>
+                        <option value="110">31岁 (110分)</option>
+                        <option value="100">32岁 (100分)</option>
+                        <option value="90">33岁 (90分)</option>
+                        <option value="80">34岁 (80分)</option>
+                        <option value="75">35岁 (75分)</option>
+                        <option value="70">36岁 (70分)</option>
+                        <option value="65">37岁 (65分)</option>
+                        <option value="60">38岁 (60分)</option>
+                        <option value="55">39岁 (55分)</option>
+                        <option value="50">40岁 (50分)</option>
+                        <option value="40">41岁 (40分)</option>
+                        <option value="30">42岁 (30分)</option>
+                        <option value="20">43岁 (20分)</option>
+                        <option value="10">44岁 (10分)</option>
+                        <option value="0">45岁及以上 (0分)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">工作经验 (最高70分)</h3>
+                <div class="form-group">
+                    <label>过去5年内的工作经验时长</label>
+                    <select id="work-experience">
+                        <option value="0">少于12个月 (0分)</option>
+                        <option value="20">12-23个月 (20分)</option>
+                        <option value="40">24-35个月 (40分)</option>
+                        <option value="50">36-47个月 (50分)</option>
+                        <option value="70">48个月及以上 (70分)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">学历 (最高130分)</h3>
+                <div class="form-group">
+                    <label>您的最高学历</label>
+                    <select id="education">
+                        <option value="13">高中毕业 (13分)</option>
+                        <option value="26">职业高中900小时以上/1年全日制 (26分)</option>
+                        <option value="39">2年全日制大专 (39分)</option>
+                        <option value="52">大专技术类900小时以上/1-2年全日制 (52分)</option>
+                        <option value="78">3年全日制大专/大学1年 (78分)</option>
+                        <option value="91">大学2年 (91分)</option>
+                        <option value="104">大学3-4年 (104分)</option>
+                        <option value="110">大学5年或以上/硕士1年 (110分)</option>
+                        <option value="117">硕士2年或以上 (117分)</option>
+                        <option value="130">医学专科/博士 (130分)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="quebec-needs">
+            <div class="section">
+                <h3 class="section-title">职业评估与工作经验 (最高120分)</h3>
+                <div class="form-group">
+                    <label>您的主职业劳动力市场诊断</label>
+                    <select id="labor-market">
+                        <option value="balanced">平衡或无诊断</option>
+                        <option value="slight-deficit">轻微短缺</option>
+                        <option value="deficit">短缺</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>在该职业的工作经验时长</label>
+                    <select id="occupation-experience">
+                        <option value="0">少于12个月</option>
+                        <option value="12-23">12-23个月</option>
+                        <option value="24-35">24-35个月</option>
+                        <option value="36-47">36-47个月</option>
+                        <option value="48-60">48-60个月</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">魁北克学历 (最高200分)</h3>
+                <div class="form-group">
+                    <label>您的魁北克学历</label>
+                    <select id="quebec-education">
+                        <option value="0">无魁北克学历</option>
+                        <option value="20">高中/职业高中600-899小时 (20分)</option>
+                        <option value="40">职业高中900小时以上 (40分)</option>
+                        <option value="60">2年全日制大专 (60分)</option>
+                        <option value="80">大专技术类900小时以上 (80分)</option>
+                        <option value="120">3年全日制大专/大学1年 (120分)</option>
+                        <option value="140">大学2年 (140分)</option>
+                        <option value="160">大学3-4年 (160分)</option>
+                        <option value="170">大学5年或以上/硕士1年 (170分)</option>
+                        <option value="180">硕士2年或以上 (180分)</option>
+                        <option value="200">医学专科/博士 (200分)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">魁北克工作经验 (最高160分)</h3>
+                <div class="form-group">
+                    <label>在魁北克的工作经验时长</label>
+                    <select id="quebec-work">
+                        <option value="0">少于12个月 (0分)</option>
+                        <option value="40">12-23个月 (40分)</option>
+                        <option value="80">24-35个月 (80分)</option>
+                        <option value="120">36-47个月 (120分)</option>
+                        <option value="160">48-60个月 (160分)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">蒙特利尔以外地区经历 (最高120分)</h3>
+                <div class="form-group">
+                    <label>在蒙特利尔大都会社区外的居住时长</label>
+                    <select id="outside-residence">
+                        <option value="0">0-5个月 (0分)</option>
+                        <option value="6">6-11个月 (6分)</option>
+                        <option value="16">12-23个月 (16分)</option>
+                        <option value="24">24-35个月 (24分)</option>
+                        <option value="32">36-47个月 (32分)</option>
+                        <option value="40">48个月及以上 (40分)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>在蒙特利尔大都会社区外的工作时长</label>
+                    <select id="outside-work">
+                        <option value="0">0-5个月 (0分)</option>
+                        <option value="9">6-11个月 (9分)</option>
+                        <option value="24">12-23个月 (24分)</option>
+                        <option value="36">24-35个月 (36分)</option>
+                        <option value="48">36-47个月 (48分)</option>
+                        <option value="60">48个月及以上 (60分)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>在蒙特利尔大都会社区外的学习时长</label>
+                    <select id="outside-study">
+                        <option value="0">0-5个月 (0分)</option>
+                        <option value="3">6-11个月 (3分)</option>
+                        <option value="8">12-23个月 (8分)</option>
+                        <option value="12">24-35个月 (12分)</option>
+                        <option value="16">36-47个月 (16分)</option>
+                        <option value="20">48个月及以上 (20分)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">其他加分项</h3>
+                <div class="form-group">
+                    <label>是否有经过验证的工作机会？</label>
+                    <select id="validated-job">
+                        <option value="0">无</option>
+                        <option value="30">有（工作地点在蒙特利尔大都会社区内）</option>
+                        <option value="50">有（工作地点在蒙特利尔大都会社区外）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>是否有魁北克职业资质认证？</label>
+                    <select id="professional-auth">
+                        <option value="0">无</option>
+                        <option value="50">有</option>
+                    </select>
+                    <p class="help-text">持有魁省监管机构颁发的执业许可或学历认证</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="adaptation">
+            <div class="section">
+                <h3 class="section-title">个人适应能力</h3>
+                <div class="form-group">
+                    <label>在魁北克无文凭学习经历</label>
+                    <select id="study-no-diploma">
+                        <option value="0">无或少于6个月 (0分)</option>
+                        <option value="1">已完成6-11个月 (1分)</option>
+                        <option value="3">已完成12-23个月 (3分)</option>
+                        <option value="5">已完成24-35个月 (5分)</option>
+                        <option value="8">已完成36-47个月 (8分)</option>
+                        <option value="10">已完成48个月及以上 (10分)</option>
+                        <option value="5">正在进行6-11个月 (5分)</option>
+                        <option value="12">正在进行12-23个月 (12分)</option>
+                        <option value="18">正在进行24-35个月 (18分)</option>
+                        <option value="24">正在进行36-47个月 (24分)</option>
+                        <option value="30">正在进行48个月及以上 (30分)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>在魁北克是否有亲属？</label>
+                    <select id="quebec-relative">
+                        <option value="0">无</option>
+                        <option value="10">有（直系亲属：配偶、父母、子女、兄弟姐妹）</option>
+                        <option value="5">有（配偶的亲属：父母、子女、兄弟姐妹）</option>
+                    </select>
+                    <p class="help-text">亲属需为18岁以上加拿大永久居民或公民，且您计划定居在其所在地区</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3 class="section-title">配偶/伴侣情况</h3>
+                <div class="form-group">
+                    <label>配偶的法语水平（四项技能平均）</label>
+                    <select id="spouse-french">
+                        <option value="0">1-3级 (0分)</option>
+                        <option value="4">4级 (4分)</option>
+                        <option value="6">5-6级 (6分)</option>
+                        <option value="8">7-8级 (8分)</option>
+                        <option value="10">9-12级 (10分)</option>
+                    </select>
+                    <p class="help-text">四项技能（听力、口语、阅读、写作）得分相同，此处选择一项代表整体水平</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>配偶的年龄</label>
+                    <select id="spouse-age">
+                        <option value="18">16-19岁 (18分)</option>
+                        <option value="20" selected>20-30岁 (20分)</option>
+                        <option value="18">31岁 (18分)</option>
+                        <option value="17">32岁 (17分)</option>
+                        <option value="16">33岁 (16分)</option>
+                        <option value="15">34岁 (15分)</option>
+                        <option value="14">35岁 (14分)</option>
+                        <option value="12">36岁 (12分)</option>
+                        <option value="10">37岁 (10分)</option>
+                        <option value="8">38岁 (8分)</option>
+                        <option value="7">39岁 (7分)</option>
+                        <option value="6">40岁 (6分)</option>
+                        <option value="5">41岁 (5分)</option>
+                        <option value="4">42岁 (4分)</option>
+                        <option value="3">43岁 (3分)</option>
+                        <option value="2">44岁 (2分)</option>
+                        <option value="0">45岁及以上 (0分)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>配偶在魁北克的工作经验</label>
+                    <select id="spouse-quebec-work">
+                        <option value="0">0-5个月 (0分)</option>
+                        <option value="5">6-11个月 (5分)</option>
+                        <option value="10">12-23个月 (10分)</option>
+                        <option value="15">24-35个月 (15分)</option>
+                        <option value="23">36-47个月 (23分)</option>
+                        <option value="30">48-60个月 (30分)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>配偶的学历</label>
+                    <select id="spouse-education">
+                        <option value="2">高中毕业 (2分)</option>
+                        <option value="4">职业高中 (4分)</option>
+                        <option value="6">2年全日制大专 (6分)</option>
+                        <option value="8">大专技术类 (8分)</option>
+                        <option value="10">3年全日制大专/大学1年 (10分)</option>
+                        <option value="12">大学2年 (12分)</option>
+                        <option value="14">大学3-4年 (14分)</option>
+                        <option value="16">大学5年或以上/硕士1年 (16分)</option>
+                        <option value="18">硕士2年或以上 (18分)</option>
+                        <option value="20">医学专科/博士 (20分)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>配偶的魁北克学历</label>
+                    <select id="spouse-quebec-education">
+                        <option value="0">无魁北克学历</option>
+                        <option value="6">高中/职业高中 (6分)</option>
+                        <option value="12">2年全日制大专 (12分)</option>
+                        <option value="18">大专技术类 (18分)</option>
+                        <option value="21">3年全日制大专/大学1年 (21分)</option>
+                        <option value="24">大学2年 (24分)</option>
+                        <option value="27">大学3-4年/硕士1年 (27分)</option>
+                        <option value="30">硕士2年或以上/博士 (30分)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="score-display">
+            <h3>您的总分</h3>
+            <div class="total-score" id="total-score">0</div>
+            <div class="max-score">最高可能得分: 1400</div>
+            <button class="reset-btn" id="reset-btn">重置所有选项</button>
+        </div>
+    </div>
+
+    <script>
+        // 选项卡切换功能
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // 添加active类到当前选项卡
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // 计算总分功能
+        function calculateTotalScore() {
+            let total = 0;
+            
+            // 人力资本部分
+            const hasSpouse = document.getElementById('has-spouse').value;
+            const frenchExemption = document.getElementById('french-exemption').value;
+            
+            // 法语分数计算
+            let frenchScore = 0;
+            if (frenchExemption === 'yes') {
+                frenchScore = hasSpouse === 'yes' ? 160 : 200; // 四项技能均达到9级
+            } else {
+                const listening = parseInt(document.getElementById('listening').value);
+                const speaking = parseInt(document.getElementById('speaking').value);
+                const reading = parseInt(document.getElementById('reading').value);
+                const writing = parseInt(document.getElementById('writing').value);
+                frenchScore = listening + speaking + reading + writing;
+            }
+            total += frenchScore;
+            
+            // 年龄
+            total += parseInt(document.getElementById('age').value);
+            
+            // 工作经验
+            total += parseInt(document.getElementById('work-experience').value);
+            
+            // 学历
+            total += parseInt(document.getElementById('education').value);
+            
+            // 魁北克需求部分
+            // 职业评估与工作经验
+            const laborMarket = document.getElementById('labor-market').value;
+            const occupationExp = document.getElementById('occupation-experience').value;
+            
+            let occupationScore = 0;
+            if (laborMarket === 'balanced') {
+                if (occupationExp === '12-23') occupationScore = 5;
+                else if (occupationExp === '24-35') occupationScore = 10;
+                else if (occupationExp === '36-47') occupationScore = 15;
+                else if (occupationExp === '48-60') occupationScore = 25;
+            } else if (laborMarket === 'slight-deficit') {
+                if (occupationExp === '12-23') occupationScore = 70;
+                else if (occupationExp === '24-35') occupationScore = 80;
+                else if (occupationExp === '36-47') occupationScore = 90;
+                else if (occupationExp === '48-60') occupationScore = 100;
+            } else if (laborMarket === 'deficit') {
+                if (occupationExp === '12-23') occupationScore = 90;
+                else if (occupationExp === '24-35') occupationScore = 100;
+                else if (occupationExp === '36-47') occupationScore = 110;
+                else if (occupationExp === '48-60') occupationScore = 120;
+            }
+            total += occupationScore;
+            
+            // 魁北克学历
+            total += parseInt(document.getElementById('quebec-education').value);
+            
+            // 魁北克工作经验
+            total += parseInt(document.getElementById('quebec-work').value);
+            
+            // 蒙特利尔以外地区经历
+            total += parseInt(document.getElementById('outside-residence').value);
+            total += parseInt(document.getElementById('outside-work').value);
+            total += parseInt(document.getElementById('outside-study').value);
+            
+            // 其他加分项
+            total += parseInt(document.getElementById('validated-job').value);
+            total += parseInt(document.getElementById('professional-auth').value);
+            
+            // 适应能力部分
+            total += parseInt(document.getElementById('study-no-diploma').value);
+            total += parseInt(document.getElementById('quebec-relative').value);
+            
+            // 配偶情况
+            if (hasSpouse === 'yes') {
+                // 配偶法语 (四项技能，此处简化处理)
+                const spouseFrench = parseInt(document.getElementById('spouse-french').value);
+                total += spouseFrench * 4; // 假设四项技能水平相同
+                
+                total += parseInt(document.getElementById('spouse-age').value);
+                total += parseInt(document.getElementById('spouse-quebec-work').value);
+                total += parseInt(document.getElementById('spouse-education').value);
+                total += parseInt(document.getElementById('spouse-quebec-education').value);
+            }
+            
+            // 更新总分显示
+            document.getElementById('total-score').textContent = total;
+        }
+        
+        // 为所有输入元素添加事件监听
+        document.querySelectorAll('select, input').forEach(element => {
+            element.addEventListener('change', calculateTotalScore);
+        });
+        
+        // 重置按钮功能
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            document.querySelectorAll('select').forEach(select => {
+                select.selectedIndex = 0;
+            });
+            
+            // 设置一些默认值
+            document.getElementById('age').selectedIndex = 1; // 20-30岁
+            document.getElementById('spouse-age').selectedIndex = 1; // 20-30岁
+            
+            calculateTotalScore();
+        });
+        
+        // 初始计算
+        calculateTotalScore();
+    </script>
+</body>
+</html>

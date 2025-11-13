@@ -8,6 +8,13 @@
 
 > 安装文件名称顺序合并成一个文件，文件中间设置间隔时长(默认 30MS)；
 
+## mp4 转 MP3
+
+> 单个文件转换
+> ./convert_audio.sh video.mp4
+> 批量转文件夹下所有文件
+> ./ bath_convert.sh
+
 ## images_to_text todo
 
 - x_ebook 电子书模版

@@ -3,8 +3,8 @@
   "scripts": {
     "split": "python3 split_by_sentence.py",
     "merge": "vite --mode admin",
-    "build": "vite build",
-    "lint": "eslint .",
+    "convert": "./convert_audio.sh video.mp4",
+    "convert_batch": "./bath_convert.sh",
     "deploy": "vite preview"
   }
 }
